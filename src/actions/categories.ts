@@ -8,10 +8,12 @@ export async function createCategory(formData: FormData) {
   const slug = formData.get("slug") as string;
 
   await prisma.category.create({ data: { name, slug } });
+  revalidatePath("/products");
   revalidatePath("/admin/categories");
 }
 
 export async function deleteCategory(id: string) {
   await prisma.category.delete({ where: { id } });
+  revalidatePath("/products");
   revalidatePath("/admin/categories");
 }

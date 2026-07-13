@@ -1,7 +1,10 @@
-import { WHATSAPP_URL, CONTACT_EMAIL, CONTACT_PHONE } from "@/lib/constants";
+import { getSettings } from "@/lib/settings";
 import { ContactForm } from "./contact-form";
 
-export default function ContactPage() {
+export const dynamic = "force-dynamic";
+
+export default async function ContactPage() {
+  const settings = await getSettings();
   return (
     <div className="container mx-auto px-4 py-12">
       <h1 className="text-3xl font-heading font-bold">Contact Us</h1>
@@ -17,16 +20,16 @@ export default function ContactPage() {
             <ul className="mt-3 space-y-3 text-sm text-muted-foreground">
               <li>
                 <span className="font-medium text-foreground">Phone:</span>{" "}
-                {CONTACT_PHONE}
+                {settings.contact_phone}
               </li>
               <li>
                 <span className="font-medium text-foreground">Email:</span>{" "}
-                {CONTACT_EMAIL}
+                {settings.contact_email}
               </li>
               <li>
                 <span className="font-medium text-foreground">WhatsApp:</span>{" "}
                 <a
-                  href={WHATSAPP_URL}
+                  href={`https://wa.me/${settings.whatsapp_number}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-primary hover:underline"
@@ -39,7 +42,7 @@ export default function ContactPage() {
           <div>
             <h2 className="text-lg font-heading font-semibold">Visit Us</h2>
             <p className="mt-3 text-sm text-muted-foreground">
-              Bhole Farms, Maharashtra
+              {settings.address}
             </p>
           </div>
           <div>

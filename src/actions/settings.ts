@@ -9,5 +9,7 @@ export async function updateSetting(key: string, value: string) {
     update: { value },
     create: { key, value },
   });
+  revalidatePath("/");
+  revalidatePath("/contact");
   revalidatePath("/admin/settings");
 }

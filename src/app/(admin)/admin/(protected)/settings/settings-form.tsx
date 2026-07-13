@@ -41,6 +41,7 @@ export function SettingsForm({ settings, settingKeys }: SettingsFormProps) {
         <div key={key} className="space-y-2">
           <Label htmlFor={key}>{settingLabels[key] || key}</Label>
           <Input
+            key={`${key}-${settings[key] || ""}`}
             id={key}
             name={key}
             defaultValue={settings[key] || ""}

@@ -1,14 +1,15 @@
 import Link from "next/link";
-import { NAV_LINKS, SITE_NAME } from "@/lib/constants";
+import { NAV_LINKS } from "@/lib/constants";
+import { getSettings } from "@/lib/settings";
+import { Logo } from "./logo";
 
-export function Header() {
+export async function Header() {
+  const settings = await getSettings();
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container mx-auto flex h-16 items-center justify-between px-4">
         <Link href="/" className="flex items-center gap-2">
-          <span className="text-xl font-heading font-bold text-primary">
-            {SITE_NAME}
-          </span>
+          <Logo name={settings.site_name} size="sm" />
         </Link>
         <nav className="hidden md:flex items-center gap-6">
           {NAV_LINKS.map((link) => (

@@ -9,10 +9,12 @@ export async function createGalleryItem(formData: FormData) {
   const category = formData.get("category") as string;
 
   await prisma.galleryItem.create({ data: { title, image, category } });
+  revalidatePath("/gallery");
   revalidatePath("/admin/gallery");
 }
 
 export async function deleteGalleryItem(id: string) {
   await prisma.galleryItem.delete({ where: { id } });
+  revalidatePath("/gallery");
   revalidatePath("/admin/gallery");
 }

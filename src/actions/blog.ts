@@ -15,6 +15,8 @@ export async function createBlogPost(formData: FormData) {
     data: { title, slug, content, excerpt, coverImage, published },
   });
 
+  revalidatePath("/");
+  revalidatePath("/blog");
   revalidatePath("/admin/blog");
 }
 
@@ -31,10 +33,14 @@ export async function updateBlogPost(id: string, formData: FormData) {
     data: { title, slug, content, excerpt, coverImage, published },
   });
 
+  revalidatePath("/");
+  revalidatePath("/blog");
   revalidatePath("/admin/blog");
 }
 
 export async function deleteBlogPost(id: string) {
   await prisma.blogPost.delete({ where: { id } });
+  revalidatePath("/");
+  revalidatePath("/blog");
   revalidatePath("/admin/blog");
 }

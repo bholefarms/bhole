@@ -18,6 +18,8 @@ export async function createProduct(formData: FormData) {
     data: { name, slug, description, price, categoryId, isFeatured, isSeasonal, season, stock },
   });
 
+  revalidatePath("/");
+  revalidatePath("/products");
   revalidatePath("/admin/products");
 }
 
@@ -37,10 +39,14 @@ export async function updateProduct(id: string, formData: FormData) {
     data: { name, slug, description, price, categoryId, isFeatured, isSeasonal, season, stock },
   });
 
+  revalidatePath("/");
+  revalidatePath("/products");
   revalidatePath("/admin/products");
 }
 
 export async function deleteProduct(id: string) {
   await prisma.product.delete({ where: { id } });
+  revalidatePath("/");
+  revalidatePath("/products");
   revalidatePath("/admin/products");
 }
