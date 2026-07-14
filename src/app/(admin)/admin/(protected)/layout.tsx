@@ -53,7 +53,7 @@ export default async function AdminLayout({
           </form>
         </div>
       </aside>
-      <main className="flex-1 overflow-auto p-6">{children}</main>
+      <main className="flex-1 overflow-auto px-6 pb-6 pt-20">{children}</main>
       <Toaster position="top-right" richColors closeButton />
     </div>
   );
