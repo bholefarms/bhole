@@ -9,11 +9,11 @@ export default async function AdminBlogPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-heading font-bold">Blog Posts</h1>
+      <div className="flex items-center justify-between gap-4">
+        <h1 className="text-2xl font-heading font-bold leading-tight">Blog Posts</h1>
         <Link
           href="/admin/blog/new"
-          className="rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90"
+          className="inline-flex items-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90 h-10"
         >
           New Post
         </Link>
