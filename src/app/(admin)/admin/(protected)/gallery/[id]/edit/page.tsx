@@ -1,6 +1,8 @@
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { GalleryForm } from "../../gallery-form";
+import { PageContainer } from "@/components/admin/page-container";
+import { PageHeader } from "@/components/admin/page-header";
 
 export const dynamic = "force-dynamic";
 
@@ -18,8 +20,8 @@ export default async function EditGalleryPage({ params }: EditGalleryPageProps) 
   if (!item) notFound();
 
   return (
-    <div className="space-y-6">
-      <h1 className="text-2xl font-heading font-bold">Edit Gallery Item</h1>
+    <PageContainer>
+      <PageHeader title="Edit Gallery Item" description="Update your gallery item" />
       <GalleryForm
         itemId={id}
         defaultValues={{
@@ -34,6 +36,6 @@ export default async function EditGalleryPage({ params }: EditGalleryPageProps) 
           })),
         }}
       />
-    </div>
+    </PageContainer>
   );
 }
