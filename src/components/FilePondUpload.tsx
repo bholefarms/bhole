@@ -2,11 +2,8 @@
 
 import { useState, useCallback, useEffect } from "react";
 import { FilePond, registerPlugin } from "react-filepond";
-// @ts-expect-error - no types available
 import FilePondPluginImagePreview from "filepond-plugin-image-preview";
-// @ts-expect-error - no types available
 import FilePondPluginFileValidateType from "filepond-plugin-file-validate-type";
-// @ts-expect-error - no types available
 import FilePondPluginFileValidateSize from "filepond-plugin-file-validate-size";
 import "filepond/dist/filepond.min.css";
 import "filepond-plugin-image-preview/dist/filepond-plugin-image-preview.css";

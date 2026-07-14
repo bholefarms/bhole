@@ -1,12 +1,16 @@
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
-import { deleteProduct } from "@/actions/products";
+import { deleteProduct, toggleActive } from "@/actions/products";
 
 export const dynamic = "force-dynamic";
 
 export default async function AdminProductsPage() {
   const products = await prisma.product.findMany({
-    include: { category: true },
+    where: { isDeleted: false },
+    include: {
+      category: true,
+      images: { where: { isThumbnail: true }, take: 1 },
+    },
     orderBy: { createdAt: "desc" },
   });
 
@@ -25,20 +29,47 @@ export default async function AdminProductsPage() {
         <table className="w-full text-sm">
           <thead className="border-b border-border bg-muted/50">
             <tr>
+              <th className="px-4 py-3 text-left font-medium">Image</th>
               <th className="px-4 py-3 text-left font-medium">Name</th>
               <th className="px-4 py-3 text-left font-medium">Category</th>
               <th className="px-4 py-3 text-left font-medium">Price</th>
-              <th className="px-4 py-3 text-left font-medium">Featured</th>
+              <th className="px-4 py-3 text-left font-medium">Unit</th>
+              <th className="px-4 py-3 text-left font-medium">Active</th>
               <th className="px-4 py-3 text-right font-medium">Actions</th>
             </tr>
           </thead>
           <tbody>
             {products.map((p) => (
               <tr key={p.id} className="border-b border-border">
-                <td className="px-4 py-3">{p.name}</td>
+                <td className="px-4 py-3">
+                  {p.images[0] ? (
+                    <img
+                      src={p.images[0].imagePath}
+                      alt={p.name}
+                      className="h-10 w-10 rounded-md object-cover"
+                    />
+                  ) : (
+                    <div className="h-10 w-10 rounded-md bg-muted" />
+                  )}
+                </td>
+                <td className="px-4 py-3 font-medium">{p.name}</td>
                 <td className="px-4 py-3 text-muted-foreground">{p.category.name}</td>
-                <td className="px-4 py-3">{p.price ? `₹${p.price}` : "-"}</td>
-                <td className="px-4 py-3">{p.isFeatured ? "Yes" : "No"}</td>
+                <td className="px-4 py-3">{p.price ? `₹${Number(p.price)}` : "-"}</td>
+                <td className="px-4 py-3 text-muted-foreground">{p.unit || "-"}</td>
+                <td className="px-4 py-3">
+                  <form action={toggleActive.bind(null, p.id)}>
+                    <button
+                      type="submit"
+                      className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${
+                        p.isActive
+                          ? "bg-green-100 text-green-700"
+                          : "bg-red-100 text-red-700"
+                      }`}
+                    >
+                      {p.isActive ? "Active" : "Inactive"}
+                    </button>
+                  </form>
+                </td>
                 <td className="px-4 py-3 text-right">
                   <Link
                     href={`/admin/products/${p.id}/edit`}

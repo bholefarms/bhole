@@ -30,13 +30,20 @@ export default async function EditProductPage({ params }: EditProductPageProps) 
           name: product.name,
           slug: product.slug,
           description: product.description,
+          shortDescription: product.shortDescription,
           price: product.price ? Number(product.price) : null,
           categoryId: product.categoryId,
+          unit: product.unit,
+          sku: product.sku,
           isFeatured: product.isFeatured,
           isSeasonal: product.isSeasonal,
+          isActive: product.isActive,
           season: product.season,
           stock: product.stock,
-          images: product.images.map((img) => img.imagePath),
+          images: product.images.map((img) => ({
+            path: `/${img.imagePath}`,
+            id: img.id,
+          })),
         }}
       />
     </div>
