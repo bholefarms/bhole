@@ -11,3 +11,5 @@ Task 5: complete (commit 989ca55)
 Task 6: complete
 Task 7: complete (commit 1a97ef9)
 Task 8: complete (commit aa721cc)
+Task 9: complete (commit 9e05054) - website gallery page was already correct
+Task 10: complete (commit 9e05054) - updated homepage/products pages to use dynamic unit

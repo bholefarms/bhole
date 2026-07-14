@@ -68,7 +68,6 @@ async function main() {
 
   console.log("Settings seeded:", defaultSettings.length);
 
-  // Fetch categories to link products
   const fruitsCategory = await prisma.category.findUniqueOrThrow({ where: { slug: "fruits" } });
   const veggiesCategory = await prisma.category.findUniqueOrThrow({ where: { slug: "vegetables" } });
   const grainsCategory = await prisma.category.findUniqueOrThrow({ where: { slug: "grains-pulses" } });
@@ -78,9 +77,12 @@ async function main() {
       name: "Kesar Mango",
       slug: "kesar-mango",
       description: "Sweet, rich in flavor and natural sweetness.",
+      shortDescription: "Premium Kesar mangoes",
       price: 220,
+      unit: "KG" as const,
+      sku: "KES-001",
       categoryId: fruitsCategory.id,
-      images: ["/images/kesar-mango.jpg"],
+      imagePath: "/images/kesar-mango.jpg",
       isFeatured: true,
       isSeasonal: true,
       season: "Summer",
@@ -90,9 +92,12 @@ async function main() {
       name: "Alphonso Mango",
       slug: "alphonso-mango",
       description: "Sweet, juicy and full of aroma. A summer favorite.",
+      shortDescription: "The king of mangoes",
       price: 180,
+      unit: "KG" as const,
+      sku: "ALP-001",
       categoryId: fruitsCategory.id,
-      images: ["/images/alphonso-mango.jpg"],
+      imagePath: "/images/alphonso-mango.jpg",
       isFeatured: true,
       isSeasonal: true,
       season: "Summer",
@@ -102,9 +107,12 @@ async function main() {
       name: "Totapuri Mango",
       slug: "totapuri-mango",
       description: "Delicious & aromatic with a smooth texture.",
+      shortDescription: "Tangy and delicious",
       price: 120,
+      unit: "KG" as const,
+      sku: "TOT-001",
       categoryId: fruitsCategory.id,
-      images: ["/images/totapuri-mango.jpg"],
+      imagePath: "/images/totapuri-mango.jpg",
       isFeatured: true,
       isSeasonal: true,
       season: "Summer",
@@ -114,9 +122,12 @@ async function main() {
       name: "Jambhul (Jamun)",
       slug: "jambhul-jamun",
       description: "Naturally sweet and healthy. Rich in antioxidants.",
+      shortDescription: "Purple treasure of summer",
       price: 100,
+      unit: "KG" as const,
+      sku: "JAM-001",
       categoryId: fruitsCategory.id,
-      images: ["/images/jambhul-jamun.jpg"],
+      imagePath: "/images/jambhul-jamun.jpg",
       isFeatured: true,
       isSeasonal: true,
       season: "Summer",
@@ -126,67 +137,163 @@ async function main() {
       name: "Guava (Peru)",
       slug: "guava-peru",
       description: "Crispy, juicy and rich in vitamin C.",
+      shortDescription: "Farm fresh guava",
       price: 80,
+      unit: "KG" as const,
+      sku: "GUA-001",
       categoryId: fruitsCategory.id,
-      images: ["/images/guava-peru.jpg"],
+      imagePath: "/images/guava-peru.jpg",
       isFeatured: false,
       isSeasonal: false,
+      season: null,
       stock: 100,
     },
     {
       name: "Pomegranate (Dalimb)",
       slug: "pomegranate-dalimb",
       description: "Full of nutrients and natural goodness.",
+      shortDescription: "Fresh pomegranates",
       price: 130,
+      unit: "KG" as const,
+      sku: "POM-001",
       categoryId: fruitsCategory.id,
-      images: ["/images/pomegranate-dalimb.jpg"],
+      imagePath: "/images/pomegranate-dalimb.jpg",
       isFeatured: false,
       isSeasonal: false,
+      season: null,
       stock: 100,
     },
     {
       name: "Fresh Vegetables",
       slug: "fresh-vegetables",
       description: "A wide variety of seasonal organic vegetables.",
+      shortDescription: "Seasonal veggies",
       price: 40,
+      unit: "KG" as const,
+      sku: "VEG-001",
       categoryId: veggiesCategory.id,
-      images: ["/images/fresh-vegetables.jpg"],
+      imagePath: "/images/fresh-vegetables.jpg",
       isFeatured: false,
       isSeasonal: false,
+      season: null,
       stock: 200,
     },
     {
       name: "Toor Dal (Organic)",
       slug: "toor-dal",
       description: "High quality organic pulses for a healthy life.",
+      shortDescription: "Organic toor dal",
       price: 110,
+      unit: "KG" as const,
+      sku: "DAL-001",
       categoryId: grainsCategory.id,
-      images: ["/images/toor-dal.jpg"],
+      imagePath: "/images/toor-dal.jpg",
       isFeatured: false,
       isSeasonal: false,
+      season: null,
       stock: 150,
     },
   ];
 
   for (const prod of products) {
-    const { images, ...prodData } = prod;
-    await prisma.product.upsert({
+    const { imagePath, ...prodData } = prod;
+    const product = await prisma.product.upsert({
       where: { slug: prod.slug },
       update: {
         name: prodData.name,
         description: prodData.description,
+        shortDescription: prodData.shortDescription,
         price: prodData.price,
+        unit: prodData.unit,
+        sku: prodData.sku,
         categoryId: prodData.categoryId,
         isFeatured: prodData.isFeatured,
         isSeasonal: prodData.isSeasonal,
-        season: prodData.season || null,
+        season: prodData.season,
         stock: prodData.stock,
       },
-      create: prodData,
+      create: {
+        name: prodData.name,
+        slug: prod.slug,
+        description: prodData.description,
+        shortDescription: prodData.shortDescription,
+        price: prodData.price,
+        unit: prodData.unit,
+        sku: prodData.sku,
+        categoryId: prodData.categoryId,
+        isFeatured: prodData.isFeatured,
+        isSeasonal: prodData.isSeasonal,
+        season: prodData.season,
+        stock: prodData.stock,
+      },
     });
+
+    // Upsert thumbnail image for each product
+    const existingImage = await prisma.productImage.findFirst({
+      where: { productId: product.id, isThumbnail: true },
+    });
+
+    if (!existingImage) {
+      await prisma.productImage.create({
+        data: {
+          productId: product.id,
+          imagePath: imagePath,
+          sortOrder: 0,
+          isThumbnail: true,
+        },
+      });
+    }
   }
 
   console.log("Products seeded:", products.length);
+
+  // Seed gallery items
+  const galleryItems = [
+    { title: "Sunrise at the Orchard", slug: "sunrise-orchard", category: "Farm Life", imagePath: "https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=600&q=80", order: 1 },
+    { title: "Alphonso Mango Harvest", slug: "alphonso-harvest", category: "Mangoes", imagePath: "https://images.unsplash.com/photo-1553279768-865429fa0078?w=600&q=80", order: 2 },
+    { title: "Fresh Jamun Berries", slug: "fresh-jamun", category: "Jamun", imagePath: "https://images.unsplash.com/photo-1601493700631-2b16ec4b4716?w=600&q=80", order: 3 },
+    { title: "Our Farmers", slug: "our-farmers", category: "Farm Life", imagePath: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=600&q=80", order: 4 },
+    { title: "Green Fields", slug: "green-fields", category: "Harvest", imagePath: "https://images.unsplash.com/photo-1574323347407-f5e1ad6d020b?w=600&q=80", order: 5 },
+    { title: "Organic Farming", slug: "organic-farming", category: "Harvest", imagePath: "https://images.unsplash.com/photo-1523348837708-15d4a09cfac2?w=600&q=80", order: 6 },
+    { title: "Kesar Mangoes", slug: "kesar-mangoes-gallery", category: "Mangoes", imagePath: "https://images.unsplash.com/photo-1629828874514-d53eeea7a101?w=600&q=80", order: 7 },
+    { title: "Farm Sunset", slug: "farm-sunset", category: "Farm Life", imagePath: "https://images.unsplash.com/photo-1536677813196-8fed27bcecdc?w=600&q=80", order: 8 },
+    { title: "Drone View", slug: "drone-view", category: "Drone Shots", imagePath: "https://images.unsplash.com/photo-1574180566232-6e1a7e3b6e5b?w=600&q=80", order: 9 },
+  ];
+
+  for (const gItem of galleryItems) {
+    const { imagePath, ...itemData } = gItem;
+    const item = await prisma.galleryItem.upsert({
+      where: { slug: gItem.slug },
+      update: {
+        title: itemData.title,
+        category: itemData.category,
+        order: itemData.order,
+      },
+      create: {
+        title: itemData.title,
+        slug: gItem.slug,
+        category: itemData.category,
+        order: itemData.order,
+      },
+    });
+
+    // Add gallery image if not exists
+    const existingGalleryImage = await prisma.galleryImage.findFirst({
+      where: { galleryId: item.id },
+    });
+
+    if (!existingGalleryImage) {
+      await prisma.galleryImage.create({
+        data: {
+          galleryId: item.id,
+          imagePath: imagePath,
+          sortOrder: 0,
+        },
+      });
+    }
+  }
+
+  console.log("Gallery items seeded:", galleryItems.length);
 }
 
 main()
