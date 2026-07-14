@@ -14,7 +14,6 @@ export { DeleteDialog } from "./delete-dialog";
 export { ImageGrid } from "./image-grid";
 export { Pagination } from "./pagination";
 export { ActivityTimeline } from "./activity-timeline";
-export { AvatarMenu } from "./avatar-menu";
 export { UserMenu } from "./user-menu";
 export { NotificationMenu } from "./notification-menu";
 export { QuickAdd } from "./quick-add";
