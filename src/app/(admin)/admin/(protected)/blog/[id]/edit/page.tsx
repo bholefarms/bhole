@@ -2,25 +2,25 @@ import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { updateBlogPost } from "@/actions/blog";
 import { BlogForm } from "../../blog-form";
+import { PageContainer } from "@/components/admin/page-container";
+import { PageHeader } from "@/components/admin/page-header";
+import { Breadcrumbs } from "@/components/admin/breadcrumbs";
 
-export const dynamic = "force-dynamic";
-
-interface EditBlogPostPageProps {
+export default async function EditBlogPage({
+  params,
+}: {
   params: Promise<{ id: string }>;
-}
-
-export default async function EditBlogPostPage({ params }: EditBlogPostPageProps) {
+}) {
   const { id } = await params;
   const post = await prisma.blogPost.findUnique({ where: { id } });
   if (!post) notFound();
 
-  const updateWithId = updateBlogPost.bind(null, id);
-
   return (
-    <div className="space-y-6">
-      <h1 className="text-2xl font-heading font-bold">Edit Blog Post</h1>
+    <PageContainer>
+      <Breadcrumbs />
+      <PageHeader title={`Edit: ${post.title}`} description="Update your blog post" />
       <BlogForm
-        action={updateWithId}
+        action={updateBlogPost.bind(null, id)}
         defaultValues={{
           title: post.title,
           slug: post.slug,
@@ -30,6 +30,6 @@ export default async function EditBlogPostPage({ params }: EditBlogPostPageProps
           published: post.published,
         }}
       />
-    </div>
+    </PageContainer>
   );
 }
