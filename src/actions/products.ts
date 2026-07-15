@@ -29,6 +29,8 @@ export async function createProduct(formData: FormData) {
     console.error("[createProduct] JSON.parse failed for imagesData", e);
   }
 
+  let productId: string | undefined;
+
   await prisma.$transaction(async (tx) => {
     const product = await tx.product.create({
       data: {
@@ -47,6 +49,7 @@ export async function createProduct(formData: FormData) {
         isActive: true,
       },
     });
+    productId = product.id;
 
     if (images.length > 0) {
       const imageData = images.map((img, i) => ({
@@ -63,7 +66,7 @@ export async function createProduct(formData: FormData) {
     }
   });
 
-  console.log("[createProduct] transaction complete, product id:", product?.id);
+  console.log("[createProduct] transaction complete, product id:", productId);
   revalidateProduct(slug);
 }
 

@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState, useState, useCallback } from "react";
+import { useActionState, useState, useCallback, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -52,6 +52,7 @@ const PRODUCT_UNITS = ["KG", "GRAM", "DOZEN", "BOX", "PIECE", "LITER", "ML", "BU
 
 export function ProductForm({ categories, productId, defaultValues }: ProductFormProps) {
   const action = productId ? updateProduct.bind(null, productId) : createProduct;
+  const uploadedFilesRef = useRef<UploadedFile[]>([]);
   const [uploadedFiles, setUploadedFiles] = useState<UploadedFile[]>([]);
   const [selectedUnit, setSelectedUnit] = useState(defaultValues?.unit || "");
   const [selectedCategory, setSelectedCategory] = useState(defaultValues?.categoryId || "");
@@ -62,8 +63,9 @@ export function ProductForm({ categories, productId, defaultValues }: ProductFor
       formData.set("categoryId", selectedCategory);
       console.log("[ProductForm] submitting form");
       console.log("[ProductForm] uploadedFiles state:", uploadedFiles);
-      console.log("[ProductForm] imagesData from hidden input:", formData.get("imagesData"));
-      console.log("[ProductForm] all formData entries:", [...formData.entries()].map(([k, v]) => `${k}=${v}`));
+      console.log("[ProductForm] uploadedFiles ref:", uploadedFilesRef.current);
+      formData.set("imagesData", JSON.stringify(uploadedFilesRef.current));
+      console.log("[ProductForm] imagesData set from ref:", JSON.stringify(uploadedFilesRef.current));
       await action(formData);
     },
     undefined
@@ -71,6 +73,7 @@ export function ProductForm({ categories, productId, defaultValues }: ProductFor
 
   const handleFilesChange = useCallback((files: UploadedFile[]) => {
     console.log("[ProductForm] handleFilesChange called with", files);
+    uploadedFilesRef.current = files;
     setUploadedFiles(files);
   }, []);
 
