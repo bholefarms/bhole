@@ -22,10 +22,13 @@ async function submitContact(
         message: formData.get("message"),
       }),
     });
-    if (!res.ok) return "Something went wrong. Please try again.";
+    if (!res.ok) {
+      const data = await res.json().catch(() => ({}));
+      return data?.error || "Something went wrong. Please try again.";
+    }
     return "success";
-  } catch {
-    return "Something went wrong. Please try again.";
+  } catch (err) {
+    return err instanceof Error ? err.message : "Something went wrong. Please try again.";
   }
 }
 
