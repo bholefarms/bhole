@@ -25,9 +25,6 @@ export async function createProduct(formData: FormData) {
     if (imagesData) images = JSON.parse(imagesData);
   } catch {}
 
-  console.log("[createProduct] formData entries:", [...formData.entries()].map(([k, v]) => `${k}=${v}`));
-  console.log("[createProduct] price:", price, "stock:", stock, "categoryId:", categoryId, "images:", JSON.stringify(images));
-
   await prisma.$transaction(async (tx) => {
     const product = await tx.product.create({
       data: {

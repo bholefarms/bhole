@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { FilePond, registerPlugin } from "react-filepond";
 import FilePondPluginImagePreview from "filepond-plugin-image-preview";
 import FilePondPluginFileValidateType from "filepond-plugin-file-validate-type";
@@ -34,7 +34,9 @@ export default function FilePondUpload({
   label = "Images",
 }: FilePondUploadProps) {
   const [files, setFiles] = useState<any[]>([]);
-  const [uploadedFiles, setUploadedFiles] = useState<UploadedFile[]>([]);
+  const uploadedRef = useRef<UploadedFile[]>([]);
+  const onFilesChangeRef = useRef(onFilesChange);
+  onFilesChangeRef.current = onFilesChange;
   const FilePondComponent = FilePond as any;
 
   // Load existing images on mount
@@ -59,41 +61,11 @@ export default function FilePondUpload({
         path: img.path,
         isExisting: true,
       }));
-      setUploadedFiles(initialUploaded);
-      onFilesChange(initialUploaded);
+      uploadedRef.current = initialUploaded;
+      onFilesChangeRef.current(initialUploaded);
     }
-    // Only run on mount
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
-  const handleUpdateFileItems = useCallback(
-    (fileItems: any[]) => {
-      setFiles(fileItems);
-
-      const current: UploadedFile[] = [];
-      for (const item of fileItems) {
-        if (item.serverId && typeof item.serverId === "string") {
-          try {
-            const parsed = JSON.parse(item.serverId);
-            // Newly uploaded via API
-            current.push({ ...parsed, isExisting: false });
-          } catch {
-            // serverId might be a file path for local files
-            current.push({ id: "", path: item.serverId, isExisting: true });
-          }
-        } else if (item.file && item.filename) {
-          // Local existing file loaded from source
-          const existing = uploadedFiles.find(
-            (u) => u.path.endsWith(item.filename as string)
-          );
-          if (existing) current.push(existing);
-        }
-      }
-      setUploadedFiles(current);
-      onFilesChange(current);
-    },
-    [uploadedFiles, onFilesChange]
-  );
 
   return (
     <div className="space-y-2">
@@ -129,7 +101,32 @@ export default function FilePondUpload({
           load: null,
           fetch: null,
         }}
-        onupdatefiles={handleUpdateFileItems}
+        onprocessfile={(_error: any, file: any) => {
+          const serverId = file.serverId;
+          if (serverId && typeof serverId === "string") {
+            try {
+              const parsed = JSON.parse(serverId);
+              uploadedRef.current = [
+                ...uploadedRef.current,
+                { ...parsed, isExisting: false },
+              ];
+              onFilesChangeRef.current(uploadedRef.current);
+            } catch {}
+          }
+        }}
+        onremovefile={(_error: any, file: any) => {
+          const meta = file.getMetadata ? file.getMetadata() : {};
+          const metaId: string | undefined = meta?.id;
+          let serverParsedId: string | undefined;
+          try {
+            if (file.serverId) serverParsedId = JSON.parse(file.serverId).id;
+          } catch {}
+          const removeId = metaId || serverParsedId;
+          if (removeId) {
+            uploadedRef.current = uploadedRef.current.filter((u) => u.id !== removeId);
+            onFilesChangeRef.current(uploadedRef.current);
+          }
+        }}
         name="files[]"
         credits={false}
       />
