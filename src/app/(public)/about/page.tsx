@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import { getSettings } from "@/lib/settings";
@@ -305,6 +306,61 @@ export default async function AboutPage() {
                 </AnimatedSection>
               ))}
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Meet Our Founder */}
+      <section className="section-padding">
+        <div className="container mx-auto px-4">
+          <div className="grid gap-12 lg:grid-cols-2 items-center">
+            {/* Image */}
+            <AnimatedSection direction="left" className="flex justify-center lg:justify-end">
+              <div className="relative">
+                <div className="w-64 h-64 md:w-72 md:h-72 lg:w-80 lg:h-80 rounded-full overflow-hidden border-4 border-white shadow-2xl ring-2 ring-primary/10">
+                  <Image
+                    src="/images/owner-ashruba-murkute.jpg"
+                    alt="Ashruba Murkute — Founder of Bhole Farms"
+                    width={400}
+                    height={400}
+                    className="w-full h-full object-cover"
+                    priority
+                  />
+                </div>
+                {/* Decorative leaf */}
+                <div className="absolute -bottom-4 -right-4 w-16 h-16 rounded-2xl bg-accent/20 flex items-center justify-center text-2xl shadow-lg backdrop-blur-sm border border-accent/30">
+                  🌿
+                </div>
+              </div>
+            </AnimatedSection>
+
+            {/* Content */}
+            <AnimatedSection direction="right">
+              <span className="text-xs font-button font-bold uppercase tracking-[0.2em] text-primary">Meet Our Founder</span>
+              <h2 className="mt-3 font-heading text-4xl md:text-5xl font-bold text-foreground leading-tight">
+                Ashruba Murkute
+              </h2>
+
+              {/* Founded badge */}
+              <div className="mt-3 inline-flex items-center gap-1.5 rounded-full border border-primary/20 bg-primary/5 px-4 py-1.5">
+                <svg className="w-3.5 h-3.5 text-gold" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                <span className="text-xs font-button font-bold text-primary">Founded in 2020</span>
+              </div>
+
+              <div className="mt-6 space-y-4 text-muted-foreground leading-relaxed">
+                <p>
+                  Ashruba Murkute founded this farm and garden in 2020 with the vision of growing healthy, naturally cultivated fruits while preserving traditional farming practices. Since its establishment, the farm has been dedicated to producing high-quality, fresh, and chemical-free produce with a strong commitment to sustainability, quality, and customer trust.
+                </p>
+              </div>
+
+              {/* Quote */}
+              <div className="mt-6 relative pl-6 border-l-2 border-primary/30">
+                <svg className="absolute -top-1 -left-2 w-5 h-5 text-primary/20" fill="currentColor" viewBox="0 0 24 24"><path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10H14.017zM0 21v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151C7.563 6.068 6 8.789 6 11h4v10H0z"/></svg>
+                <p className="text-base italic text-foreground/80 font-medium">
+                  &ldquo;Growing naturally, serving quality.&rdquo;
+                </p>
+              </div>
+            </AnimatedSection>
           </div>
         </div>
       </section>
