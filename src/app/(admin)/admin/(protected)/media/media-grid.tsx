@@ -2,6 +2,7 @@
 
 import { useState, useMemo } from "react";
 import { ImageIcon, Trash2, X } from "lucide-react";
+import { toast } from "sonner";
 import { SearchBar } from "@/components/admin/search-bar";
 import { DataTableToolbar } from "@/components/admin/data-table-toolbar";
 import { DeleteDialog } from "@/components/admin/delete-dialog";
@@ -27,6 +28,7 @@ export function MediaGrid({ items, onDelete }: MediaGridProps) {
   const [filter, setFilter] = useState<"all" | "product" | "gallery">("all");
   const [preview, setPreview] = useState<MediaItem | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<{ id: string; type: "product" | "gallery" } | null>(null);
+  const [deleting, setDeleting] = useState(false);
 
   const filtered = useMemo(() => {
     let result = items;
@@ -105,10 +107,18 @@ export function MediaGrid({ items, onDelete }: MediaGridProps) {
         open={!!deleteTarget}
         onClose={() => setDeleteTarget(null)}
         onConfirm={async () => {
-          if (!deleteTarget) return;
-          await onDelete(deleteTarget.id, deleteTarget.type);
-          setDeleteTarget(null);
+          if (!deleteTarget || deleting) return;
+          setDeleting(true);
+          try {
+            await onDelete(deleteTarget.id, deleteTarget.type);
+            setDeleteTarget(null);
+          } catch (err) {
+            toast.error(err instanceof Error ? err.message : "Failed to delete image");
+          } finally {
+            setDeleting(false);
+          }
         }}
+        loading={deleting}
       />
     </>
   );
