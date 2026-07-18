@@ -37,7 +37,6 @@ export const metadata: Metadata = {
       { url: "/icon.png", sizes: "96x96", type: "image/png" },
       { url: "/favicon.svg", sizes: "any", type: "image/svg+xml" },
     ],
-    shortcut: "/icon48.png",
     apple: "/icon.png",
   },
   openGraph: {
