@@ -32,12 +32,17 @@ export const metadata: Metadata = {
     template: `%s | ${SITE_NAME}`,
   },
   description: SITE_DESCRIPTION,
+  icons: {
+    icon: "/favicon.svg",
+    apple: "/favicon.svg",
+  },
   openGraph: {
     title: `${SITE_NAME} — Fresh • Pure • Organic`,
     description: SITE_DESCRIPTION,
     type: "website",
     locale: "en_IN",
     siteName: SITE_NAME,
+    url: siteUrl,
   },
   robots: {
     index: true,
