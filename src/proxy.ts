@@ -1,26 +1,26 @@
-import { NextRequest, NextResponse } from "next/server";
+import { auth } from "@/lib/auth";
+import { NextResponse } from "next/server";
 
-const protectedRoutes = ["/admin/dashboard", "/admin/products", "/admin/categories", "/admin/gallery", "/admin/blog", "/admin/orders", "/admin/settings", "/admin/seo"];
-const publicRoutes = ["/admin/login"];
+export default auth((req) => {
+  const { pathname } = req.nextUrl;
+  const session = req.auth;
 
-export default async function proxy(req: NextRequest) {
-  const path = req.nextUrl.pathname;
-  const isProtectedRoute = protectedRoutes.some((route) => path.startsWith(route));
-  const isPublicRoute = publicRoutes.some((route) => path.startsWith(route));
-  const hasSessionCookie = req.cookies.has("authjs.session-token") || req.cookies.has("__Secure-authjs.session-token");
+  if (pathname.startsWith("/admin/login") || pathname.startsWith("/admin/verify-2fa")) {
+    return NextResponse.next();
+  }
 
-  if (isProtectedRoute && !hasSessionCookie) {
+  if (!session?.user) {
     const loginUrl = new URL("/admin/login", req.url);
-    loginUrl.searchParams.set("callbackUrl", path);
+    loginUrl.searchParams.set("callbackUrl", pathname);
     return NextResponse.redirect(loginUrl);
   }
 
-  if (isPublicRoute && hasSessionCookie && path === "/admin/login") {
-    return NextResponse.redirect(new URL("/admin/dashboard", req.url));
+  if ((session.user as any).twoFactorPending) {
+    return NextResponse.redirect(new URL("/admin/verify-2fa", req.url));
   }
 
   return NextResponse.next();
-}
+});
 
 export const config = {
   matcher: ["/admin/:path*"],
