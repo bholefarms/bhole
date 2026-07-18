@@ -34,6 +34,8 @@ model User {
   name           String
   email          String   @unique
   hashedPassword String
+  twoFactorSecret String?
+  twoFactorEnabled Boolean  @default(false)
   role           UserRole @default(ADMIN)
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
