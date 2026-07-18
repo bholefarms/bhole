@@ -28,16 +28,20 @@ const siteUrl = process.env.AUTH_URL || "https://www.bholefarms.in";
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
-    default: `${SITE_NAME} — Fresh • Pure • Organic`,
-    template: `%s | ${SITE_NAME}`,
+    default: `Bhole Farms | Organic Mangoes, Alphonso & Seasonal Fruits in Maharashtra`,
+    template: `%s | Bhole Farms`,
   },
   description: SITE_DESCRIPTION,
   icons: {
-    icon: "/favicon.svg",
-    apple: "/favicon.svg",
+    icon: [
+      { url: "/icon.png", sizes: "96x96", type: "image/png" },
+      { url: "/favicon.svg", sizes: "any", type: "image/svg+xml" },
+    ],
+    shortcut: "/icon48.png",
+    apple: "/icon.png",
   },
   openGraph: {
-    title: `${SITE_NAME} — Fresh • Pure • Organic`,
+    title: `Bhole Farms | Organic Mangoes, Alphonso & Seasonal Fruits in Maharashtra`,
     description: SITE_DESCRIPTION,
     type: "website",
     locale: "en_IN",
