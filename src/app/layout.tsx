@@ -23,7 +23,10 @@ const poppins = Poppins({
   display: "swap",
 });
 
+const siteUrl = process.env.AUTH_URL || "https://www.bholefarms.in";
+
 export const metadata: Metadata = {
+  metadataBase: new URL(siteUrl),
   title: {
     default: `${SITE_NAME} — Fresh • Pure • Organic`,
     template: `%s | ${SITE_NAME}`,
@@ -34,6 +37,15 @@ export const metadata: Metadata = {
     description: SITE_DESCRIPTION,
     type: "website",
     locale: "en_IN",
+    siteName: SITE_NAME,
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+    },
   },
 };
 
