@@ -54,12 +54,12 @@ export async function disable2fa() {
   return { success: true };
 }
 
-export async function verify2faLogin(token: string) {
-  const session = await auth();
-  if (!session?.user?.id) return { error: "Not authenticated" };
+export async function verify2faLogin(token: string, userId: string) {
+  const session = await auth().catch(() => null);
+  const uid = session?.user?.id || userId;
 
   const user = await prisma.user.findUnique({
-    where: { id: session.user.id },
+    where: { id: uid },
     select: { twoFactorSecret: true },
   });
 

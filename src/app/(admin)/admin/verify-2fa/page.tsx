@@ -8,7 +8,7 @@ import { ShieldAlert } from "lucide-react";
 
 export default function Verify2FAPage() {
   const router = useRouter();
-  const { update } = useSession();
+  const { data: session, update } = useSession();
   const [code, setCode] = useState(["", "", "", "", "", ""]);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
@@ -40,7 +40,7 @@ export default function Verify2FAPage() {
     setLoading(true);
     setError("");
 
-    const result = await verify2faLogin(token);
+    const result = await verify2faLogin(token, session?.user?.id || "");
     if (result.error) {
       setError(result.error);
       setCode(["", "", "", "", "", ""]);
