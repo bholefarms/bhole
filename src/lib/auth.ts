@@ -32,15 +32,22 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           email: user.email,
           name: user.name,
           role: user.role,
+          twoFactorEnabled: user.twoFactorEnabled,
         };
       },
     }),
   ],
   callbacks: {
-    async jwt({ token, user }) {
+    async jwt({ token, user, trigger, session }) {
       if (user) {
         token.role = user.role;
         token.id = user.id;
+        if (user.twoFactorEnabled) {
+          token.twoFactorPending = true;
+        }
+      }
+      if (trigger === "update" && session?.twoFactorVerified) {
+        delete token.twoFactorPending;
       }
       return token;
     },
@@ -48,6 +55,9 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       if (session.user) {
         session.user.role = token.role as string;
         session.user.id = token.id as string;
+        if (token.twoFactorPending) {
+          session.user.twoFactorPending = true;
+        }
       }
       return session;
     },
