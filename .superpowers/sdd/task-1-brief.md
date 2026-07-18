@@ -1,29 +1,25 @@
 # Task 1: Prisma Schema & Dependencies
 
-**Goal:** Install dependencies (filepond, react-filepond, sharp, uuid), update Prisma schema with new models, generate client, push to DB.
+**Goal:** Add 2FA fields to User model and install otplib/qrcode dependencies.
 
 ## Files to modify
-
 - `prisma/schema.prisma`
 - `package.json`
 
 ## Steps
-
-1. Install packages: `filepond`, `react-filepond`, `sharp`, `uuid`, `@types/uuid`
-2. Update Prisma schema with:
-   - New `ProductUnit` enum (KG, GRAM, DOZEN, BOX, PIECE, LITER, ML, BUNDLE)
-   - Update `Product` model (remove `images String[]`, add `unit ProductUnit?`, add `sku String?`, add `shortDescription String?`, add `isActive Boolean @default(true)`, add `isDeleted Boolean @default(false)`, change `price` to `Decimal? @db.Decimal(10,2)`)
-   - New `ProductImage` model with fields: id, productId (FK to Product with onDelete Cascade), imagePath, fileName?, mimeType?, fileSize?, width?, height?, altText?, sortOrder, isThumbnail, createdAt
-   - New `GalleryItem` model replacing old one with: id, title?, slug? @unique, description?, category?, images GalleryImage[], order, createdAt, updatedAt
-   - New `GalleryImage` model with: id, galleryId (FK to GalleryItem with onDelete Cascade), imagePath, fileName?, mimeType?, fileSize?, width?, height?, altText?, sortOrder, createdAt
-3. Run `npx prisma generate` and `npx prisma db push`
+1. Add to User model in `prisma/schema.prisma` after `hashedPassword`:
+   - `twoFactorSecret String?`
+   - `twoFactorEnabled Boolean @default(false)`
+2. Install packages: `npm install otplib qrcode`
+3. Install types: `npm install -D @types/qrcode`
+4. Run `npx prisma generate`
+5. Run `npx prisma migrate dev --name add-2fa-fields`
+6. Commit only: prisma/schema.prisma, package.json, package-lock.json, prisma/migrations/
 
 ## Global constraints
-
-- `onDelete: Cascade` on all image foreign keys
-- UUID v4 filenames (handled later, but schema must support)
-- Relative paths in DB only
+- Prisma 7.8 with @prisma/adapter-pg
+- PostgreSQL (Supabase)
+- TypeScript strict
 
 ## Commits
-
-- `feat: add ProductImage/GalleryImage models, install filepond/sharp/uuid`
+- `feat: add 2FA fields to User model and install otplib/qrcode`

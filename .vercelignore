@@ -1,0 +1,13 @@
+Dockerfile
+.dockerignore
+docker-compose.yml
+security/
+backup/
+.omo/
+.opencode/
+scripts/
+AGENTS.md
+TechNova-Team-Briefing.pdf
+technova-briefing.html
+delete_stale_products.cjs
+create-upload-table.ts

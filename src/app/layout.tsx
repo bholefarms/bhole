@@ -33,11 +33,8 @@ export const metadata: Metadata = {
   },
   description: SITE_DESCRIPTION,
   icons: {
-    icon: [
-      { url: "/icon.png", sizes: "96x96", type: "image/png" },
-      { url: "/favicon.svg", sizes: "any", type: "image/svg+xml" },
-    ],
-    apple: "/icon.png",
+    icon: "/favicon.svg",
+    apple: "/favicon.svg",
   },
   openGraph: {
     title: `Bhole Farms | Organic Mangoes, Alphonso & Seasonal Fruits in Maharashtra`,
