@@ -27,8 +27,8 @@ export function TwoFactorSetup({ isEnabled: initiallyEnabled }: TwoFactorSetupPr
       setLoading(false);
       return;
     }
-    setSecret(result.secret);
-    setQrCode(result.qrCodeDataUrl);
+    setSecret(result.secret!);
+    setQrCode(result.qrCodeDataUrl!);
     setShowSetup(true);
     setLoading(false);
   };
