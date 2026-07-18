@@ -1,3 +1,5 @@
+import { SessionProvider } from "@/components/session-provider";
+
 export default function AdminRootLayout({
   children,
 }: {
@@ -5,7 +7,7 @@ export default function AdminRootLayout({
 }) {
   return (
     <div className="min-h-screen bg-[#F8F8F5]">
-      {children}
+      <SessionProvider>{children}</SessionProvider>
     </div>
   );
 }
